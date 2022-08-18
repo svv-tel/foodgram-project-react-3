@@ -62,7 +62,7 @@ class Recipe(models.Model):
     )
     name = models.CharField(
         verbose_name='Название',
-        max_length=256
+        max_length=200
     )
     image = models.ImageField(
         verbose_name='Картинка',
@@ -138,8 +138,7 @@ class IngredientRecipe(models.Model):
         verbose_name_plural = 'Количество ингредиентов'
 
     def __str__(self):
-        return (f'{self.ingredient.name} - {self.amount}'
-                f' {self.ingredient.measurement_unit}')
+        return f'{self.ingredient.name} - {self.amount}'
 
 
 class Favorite(models.Model):
