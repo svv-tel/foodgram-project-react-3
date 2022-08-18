@@ -1,11 +1,13 @@
-from django.contrib.auth import get_user_model
-from django.shortcuts import get_object_or_404
-from djoser.serializers import UserCreateSerializer, UserSerializer
-from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
+from recipes.models import Recipe, Ingredient, Tag, Favorite
+from users.models import User
 
-from recipes.models import Favorite, Ingredient, IngredientRecipe, Recipe, Tag
-from users.models import Subscribe
+
+class RecipeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Recipe
+        fields = ('id', 'author', 'name', 'image', 'text', 'ingredients',
+                  'tags', 'cooking_time')
 
 
 class IngredientSerializer(serializers.ModelSerializer):
@@ -24,3 +26,9 @@ class FavoriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         fields = ('id', 'name', 'image', 'cooking_time')
+
+
+class CustomUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'first_name', 'last_name')
