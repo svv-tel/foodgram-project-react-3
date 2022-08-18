@@ -8,15 +8,10 @@ EMPTY_VALUE = '<-EMPTY->'
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
-# class UserAdmin(UserAdmin):
+    # class UserAdmin(UserAdmin):
     """User model representation in admin panel"""
     list_display = (
-        'id',
-        'username',
-        'first_name',
-        'last_name',
-        'email',
-        'password',
+    'id', 'username', 'first_name', 'last_name', 'email', 'password',
     )
     list_filter = ('email', 'username',)
     empty_value_display = EMPTY_VALUE

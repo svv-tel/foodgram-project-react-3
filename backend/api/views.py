@@ -1,3 +1,4 @@
+from djoser.views import UserViewSet
 from rest_framework.generics import get_object_or_404
 from rest_framework import viewsets
 from recipes.models import Recipe, Tag, Ingredient, Favorite
@@ -5,6 +6,11 @@ from users.models import User
 from .serializers import (RecipeSerializer, IngredientSerializer,
                           CustomUserSerializer,
                           TagSerializer, FavoriteSerializer)
+
+
+class CustomUserViewSet(UserViewSet):
+    queryset = User.objects.all()
+    serializer_class = CustomUserSerializer
 
 
 class RecipesViewSet(viewsets.ModelViewSet):
@@ -25,8 +31,3 @@ class TagsViewSet(viewsets.ModelViewSet):
 class FavoriteViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = FavoriteSerializer
-
-
-class CustomUserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
-    serializer_class = CustomUserSerializer
