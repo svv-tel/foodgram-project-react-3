@@ -1,21 +1,29 @@
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin
-from django.contrib.auth.models import User
 
-from .models import Follow
+from .models import Subscribe, User
 
-
-class CustomUserAdmin(UserAdmin):
-    list_display = ('email', 'username')
-    list_filter = ('email', 'username')
+EMPTY_VALUE = '<-EMPTY->'
 
 
-@admin.register(Follow)
-class FollowAdmin(admin.ModelAdmin):
+@admin.register(User)
+class UserAdmin(admin.ModelAdmin):
+    """User model representation in admin panel"""
+    list_display = (
+        'id',
+        'username',
+        'first_name',
+        'last_name',
+        'email',
+        'password',
+    )
+    list_filter = ('email', 'username',)
+    empty_value_display = EMPTY_VALUE
+
+
+@admin.register(Subscribe)
+class SubscribeAdmin(admin.ModelAdmin):
+    """Subscribe model representation in admin panel"""
     list_display = ('id', 'user', 'author')
-    search_fields = ('user', 'author')
-    list_filter = ('user', 'author')
-
-
-admin.site.unregister(User)
-admin.site.register(User, CustomUserAdmin)
+    search_fields = ('user',)
+    list_filter = ('user',)
+    empty_value_display = EMPTY_VALUE

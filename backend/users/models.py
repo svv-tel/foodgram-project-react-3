@@ -1,34 +1,65 @@
-from django.contrib.auth import get_user_model
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-User = get_user_model()
+
+class User(AbstractUser):
+    """This is USERS model"""
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
+
+    email = models.EmailField(
+        'Адрес электронной почты',
+        max_length=256,
+        unique=True
+    )
+
+    username = models.CharField(
+        'Уникальный никнейм',
+        max_length=128,
+        unique=True
+    )
+
+    first_name = models.CharField(
+        'Имя',
+        max_length=128
+    )
+
+    last_name = models.CharField(
+        'Фамилия',
+        max_length=128
+    )
+
+    class Meta:
+        ordering = ('id',)
+        verbose_name = 'Пользователь'
+        verbose_name_plural = 'Пользователи'
+
+    def __str__(self):
+        return self.username
 
 
-class Follow(models.Model):
-    """Модель для подписки на автора"""
+class Subscribe(models.Model):
+    """This is model for Subscribers"""
     user = models.ForeignKey(
         User,
-        on_delete=models.CASCADE,
+        verbose_name='Пользователь',
         related_name='follower',
-        verbose_name='Подписчик'
+        on_delete=models.CASCADE
     )
+
     author = models.ForeignKey(
         User,
-        on_delete=models.CASCADE,
+        verbose_name='Автор',
         related_name='following',
-        verbose_name='Автор'
+        on_delete=models.CASCADE
     )
 
     class Meta:
         verbose_name = 'Подписка'
         verbose_name_plural = 'Подписки'
-        ordering = ('id',)
-        constraints = [
+        constraints = (
             models.UniqueConstraint(
-                fields=['user', 'author'],
-                name='unique_follow'
-            )
-        ]
-
-    def __str__(self):
-        return f'{self.user} - {self.author}'
+                fields=('user', 'author',),
+                name='unique_subscribe'
+            ),
+        )
