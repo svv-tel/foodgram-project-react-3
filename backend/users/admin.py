@@ -1,4 +1,5 @@
 from django.contrib import admin
+# from django.contrib.auth.admin import UserAdmin
 
 from .models import Subscribe, User
 
@@ -7,6 +8,7 @@ EMPTY_VALUE = '<-EMPTY->'
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
+# class UserAdmin(UserAdmin):
     """User model representation in admin panel"""
     list_display = (
         'id',
