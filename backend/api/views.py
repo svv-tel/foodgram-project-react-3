@@ -8,26 +8,21 @@ from .serializers import (RecipeSerializer, IngredientSerializer,
                           TagSerializer, FavoriteSerializer)
 
 
-class CustomUserViewSet(UserViewSet):
+class CustomUserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = CustomUserSerializer
+
+
+class TagsViewSet(viewsets.ModelViewSet):
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer
+
+
+class IngredientsViewSet(viewsets.ModelViewSet):
+    queryset = Ingredient.objects.all()
+    serializer_class = IngredientSerializer
 
 
 class RecipesViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
-
-
-class IngredientsViewSet(viewsets.ModelViewSet):
-    queryset = Recipe.objects.all()
-    serializer_class = IngredientSerializer
-
-
-class TagsViewSet(viewsets.ModelViewSet):
-    queryset = Recipe.objects.all()
-    serializer_class = TagSerializer
-
-
-class FavoriteViewSet(viewsets.ModelViewSet):
-    queryset = Recipe.objects.all()
-    serializer_class = FavoriteSerializer
