@@ -7,13 +7,31 @@ from rest_framework import serializers
 from recipes.models import (Recipe, Ingredient, Tag, Favorite,
                             IngredientRecipe, ShoppingCart)
 
-from rest_framework.validators import UniqueTogetherValidator
+from rest_framework.validators import UniqueTogetherValidator, UniqueValidator
 from users.models import Subscribe
 
 User = get_user_model()
 
 
 class CustomUserCreateSerializer(UserCreateSerializer):
+    class CustomUserCreateSerializer(UserCreateSerializer):
+        email = serializers.EmailField(
+            validators=[UniqueValidator(queryset=User.objects.all())])
+        username = serializers.CharField(
+            validators=[UniqueValidator(queryset=User.objects.all())])
+        first_name = serializers.CharField()
+        last_name = serializers.CharField()
+
+        class Meta:
+            model = User
+            fields = (
+                'email',
+                'username',
+                'first_name',
+                'last_name',
+                'password'
+            )
+
     class Meta:
         model = User
         fields = ('email', 'id', 'username', 'first_name', 'last_name',
