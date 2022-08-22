@@ -190,6 +190,13 @@ class RecipeListSerializer(serializers.ModelSerializer):
         return Recipe.objects.filter(shopping_cart__user=user,
                                      id=obj.id).exists()
 
+    class Meta:
+        model = Recipe
+        fields = ('id', 'tags', 'author', 'ingredients', 'is_favorited',
+                  'is_in_shopping_cart', 'name', 'image',
+                  'text', 'cooking_time')
+
+
 class RecipeCreateSerializer(serializers.ModelSerializer):
     author = serializers.HiddenField(
         default=serializers.CurrentUserDefault())
@@ -267,6 +274,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         model = Recipe
         fields = ('ingredients', 'tags', 'image', 'name',
                   'text', 'cooking_time', 'author')
+
 
 class Meta:
     model = Recipe
