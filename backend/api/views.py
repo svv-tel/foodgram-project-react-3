@@ -1,27 +1,27 @@
 import csv
+
 from django.db.models import Sum
 from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
-from rest_framework import viewsets, status
-from recipes.models import (Recipe, Tag, Ingredient, Favorite, ShoppingCart,
-                            IngredientRecipe)
+from rest_framework import status, viewsets
 from rest_framework.decorators import action
-from rest_framework.generics import get_object_or_404
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-from users.models import User, Subscribe
 
+from recipes.models import (Favorite, Ingredient, IngredientRecipe, Recipe,
+                            ShoppingCart, Tag)
+from users.models import Subscribe, User
 from .filters import IngredientFilter, RecipeFilter
 from .mixins import RetrieveListViewSet
 from .permissions import IsAuthorOrAdminOrReadOnly
-from .serializers import (IngredientSerializer,
-                          CustomUserSerializer, PasswordSerializer,
-                          TagSerializer, SubscribeSerializer,
-                          RecipeListSerializer, RecipeCreateSerializer,
-                          ShoppingCartSerializer, FavoriteSerializer,
-                          )
+from .serializers import (CustomUserSerializer, FavoriteSerializer,
+                          IngredientSerializer, PasswordSerializer,
+                          RecipeCreateSerializer, RecipeListSerializer,
+                          ShoppingCartSerializer, SubscribeSerializer,
+                          TagSerializer)
 
 
 class CustomUserViewSet(UserViewSet):
@@ -30,7 +30,7 @@ class CustomUserViewSet(UserViewSet):
 
     @action(methods=['POST'],
             detail=False,
-            permission_classes=(IsAuthenticated,))
+            permission_classes=(IsAuthenticated, ))
     def set_password(self, request, pk=None):
         user = self.request.user
         serializer = PasswordSerializer(
@@ -44,7 +44,7 @@ class CustomUserViewSet(UserViewSet):
 
     @action(methods=['GET'],
             detail=False,
-            permission_classes=(IsAuthenticated,))
+            permission_classes=(IsAuthenticated, ))
     def subscriptions(self, request):
         user = request.user
         queryset = User.objects.filter(following__user=user)
@@ -58,7 +58,7 @@ class CustomUserViewSet(UserViewSet):
 
     @action(methods=['POST', 'DELETE'],
             detail=True,
-            permission_classes=(IsAuthenticated,))
+            permission_classes=(IsAuthenticated, ))
     def subscribe(self, request, id):
         user = self.request.user
         author = get_object_or_404(User, id=id)
@@ -87,7 +87,7 @@ class CustomUserViewSet(UserViewSet):
 class TagsViewSet(RetrieveListViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
-    permission_classes = (AllowAny,)
+    permission_classes = (AllowAny, )
     pagination_class = None
 
 
@@ -103,8 +103,8 @@ class IngredientsViewSet(RetrieveListViewSet):
 class RecipesViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeListSerializer
-    permission_classes = (IsAuthorOrAdminOrReadOnly,)
-    filter_backends = (DjangoFilterBackend,)
+    permission_classes = (IsAuthorOrAdminOrReadOnly, )
+    filter_backends = (DjangoFilterBackend, )
     filterset_class = RecipeFilter
     pagination_class = PageNumberPagination
 
@@ -139,19 +139,19 @@ class RecipesViewSet(viewsets.ModelViewSet):
 
     @action(methods=['DELETE', 'POST'],
             detail=True,
-            permission_classes=(IsAuthenticated,))
+            permission_classes=(IsAuthenticated, ))
     def favorite(self, request, pk=None):
         return self.get_list(request=request, list_model=Favorite, pk=pk)
 
     @action(methods=['DELETE', 'POST'],
             detail=True,
-            permission_classes=(IsAuthenticated,))
+            permission_classes=(IsAuthenticated, ))
     def shopping_cart(self, request, pk=None):
         return self.get_list(request=request, list_model=ShoppingCart, pk=pk)
 
     @action(methods=['GET'],
             detail=False,
-            permission_classes=(IsAuthenticated,))
+            permission_classes=(IsAuthenticated, ))
     def download_shopping_cart(self, request):
         ingredients = IngredientRecipe.objects.filter(
             recipe__shopping_cart__user=request.user
