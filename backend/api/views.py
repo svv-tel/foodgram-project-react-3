@@ -121,7 +121,8 @@ class RecipesViewSet(viewsets.ModelViewSet):
             if not in_list:
                 list_objects = list_model.objects.create(user=user,
                                                          recipe=recipe)
-                if list_model == Favorite:
+                # if list_model == Favorite:
+                if isinstance(list_model, Favorite):
                     serializer = FavoriteSerializer(list_objects.recipe)
                 else:
                     serializer = ShoppingCartSerializer(list_objects.recipe)
