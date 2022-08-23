@@ -22,13 +22,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'api.apps.ApiConfig',
-    'recipes.apps.RecipesConfig',
-    'users',
     'rest_framework',
     'rest_framework.authtoken',
-    'djoser',
     'django_filters',
+    'djoser',
+    'api.apps.ApiConfig',
+    'recipes.apps.RecipesConfig',
+    'users.apps.UsersConfig',
 ]
 
 MIDDLEWARE = [
@@ -63,8 +63,10 @@ WSGI_APPLICATION = 'foodgram.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': os.getenv(key='DB_ENGINE',
-                            default='django.db.backends.postgresql'),
+        'ENGINE': os.getenv(
+            key='DB_ENGINE',
+            default='django.db.backends.postgresql'
+        ),
         'NAME': os.getenv(key='DB_NAME', default='foodgram'),
         'USER': os.getenv(key='POSTGRES_USER', default='foodgram_user'),
         'PASSWORD': os.getenv(key='POSTGRES_PASSWORD', default='foodgram'),

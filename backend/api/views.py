@@ -11,8 +11,10 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
-from recipes.models import (Favorite, Ingredient, IngredientRecipe, Recipe,
-                            ShoppingCart, Tag)
+from recipes.models import (
+    Favorite, Ingredient, IngredientRecipe, Recipe,
+    ShoppingCart, Tag
+)
 from users.models import Subscribe, User
 
 from .filters import IngredientFilter, RecipeFilter
@@ -25,13 +27,13 @@ from .serializers import (CustomUserSerializer, FavoriteSerializer,
                           TagSerializer)
 
 
-class CustomUserViewSet(UserViewSet):
+class SetPasswordAndSubscriptionUserViewSet(UserViewSet):
     queryset = User.objects.all()
     serializer_class = CustomUserSerializer
 
     @action(methods=['POST'],
             detail=False,
-            permission_classes=(IsAuthenticated, ))
+            permission_classes=(IsAuthenticated,))
     def set_password(self, request, pk=None):
         user = self.request.user
         serializer = PasswordSerializer(
@@ -45,7 +47,7 @@ class CustomUserViewSet(UserViewSet):
 
     @action(methods=['GET'],
             detail=False,
-            permission_classes=(IsAuthenticated, ))
+            permission_classes=(IsAuthenticated,))
     def subscriptions(self, request):
         user = request.user
         queryset = User.objects.filter(following__user=user)
@@ -57,9 +59,11 @@ class CustomUserViewSet(UserViewSet):
         )
         return self.get_paginated_response(serializer.data)
 
-    @action(methods=['POST', 'DELETE'],
-            detail=True,
-            permission_classes=(IsAuthenticated, ))
+    @action(
+        methods=['POST', 'DELETE'],
+        detail=True,
+        permission_classes=(IsAuthenticated,)
+    )
     def subscribe(self, request, id):
         user = self.request.user
         author = get_object_or_404(User, id=id)
@@ -88,7 +92,7 @@ class CustomUserViewSet(UserViewSet):
 class TagsViewSet(RetrieveListViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
-    permission_classes = (AllowAny, )
+    permission_classes = (AllowAny,)
     pagination_class = None
 
 
@@ -104,8 +108,8 @@ class IngredientsViewSet(RetrieveListViewSet):
 class RecipesViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeListSerializer
-    permission_classes = (IsAuthorOrAdminOrReadOnly, )
-    filter_backends = (DjangoFilterBackend, )
+    permission_classes = (IsAuthorOrAdminOrReadOnly,)
+    filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
     pagination_class = PageNumberPagination
 
@@ -140,19 +144,19 @@ class RecipesViewSet(viewsets.ModelViewSet):
 
     @action(methods=['DELETE', 'POST'],
             detail=True,
-            permission_classes=(IsAuthenticated, ))
+            permission_classes=(IsAuthenticated,))
     def favorite(self, request, pk=None):
         return self.get_list(request=request, list_model=Favorite, pk=pk)
 
     @action(methods=['DELETE', 'POST'],
             detail=True,
-            permission_classes=(IsAuthenticated, ))
+            permission_classes=(IsAuthenticated,))
     def shopping_cart(self, request, pk=None):
         return self.get_list(request=request, list_model=ShoppingCart, pk=pk)
 
     @action(methods=['GET'],
             detail=False,
-            permission_classes=(IsAuthenticated, ))
+            permission_classes=(IsAuthenticated,))
     def download_shopping_cart(self, request):
         ingredients = IngredientRecipe.objects.filter(
             recipe__shopping_cart__user=request.user
@@ -168,8 +172,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
         )
         response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] = ('attachment;'
-                                           'filename="shoppinglist.csv"')
-        response.write(u'\ufeff'.encode('utf8'))
+                                           'filename="shopping_list.csv"')
         writer = csv.writer(response)
         for row in list(ingredients):
             writer.writerow(row)

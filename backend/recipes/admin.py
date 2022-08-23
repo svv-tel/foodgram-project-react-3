@@ -1,7 +1,9 @@
 from django.contrib import admin
 
-from .models import (Favorite, Ingredient, IngredientRecipe, Recipe,
-                     ShoppingCart, Tag)
+from .models import (
+    Favorite, Ingredient, IngredientRecipe, Recipe,
+    ShoppingCart, Tag
+)
 
 EMPTY_VALUE = '<-EMPTY->'
 
@@ -39,7 +41,9 @@ class RecipeAdmin(admin.ModelAdmin):
     empty_value_display = EMPTY_VALUE
 
     def is_favorited(self, obj):
-        return Favorite.objects.filter(recipe=obj).count()
+    #     return Favorite.objects.filter(recipe=obj).count()
+        return obj.favorites.count()
+
 
 
 @admin.register(Favorite)
