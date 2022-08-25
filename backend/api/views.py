@@ -81,7 +81,7 @@ class SetPasswordAndSubscriptionUserViewSet(UserViewSet):
                 context={'request': request}
             )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        elif request.method == "DELETE":
+        if request.method == "DELETE":
             if not subscribe.exists():
                 data = {'errors': 'Вы не подписанны на этого пользователя.'}
                 return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
@@ -121,14 +121,16 @@ class RecipesViewSet(viewsets.ModelViewSet):
             if not in_list:
                 list_objects = list_model.objects.create(user=user,
                                                          recipe=recipe)
-                # if list_model == Favorite:
+
                 if isinstance(list_model, Favorite):
                     serializer = FavoriteSerializer(list_objects.recipe)
                 else:
                     serializer = ShoppingCartSerializer(list_objects.recipe)
-                return Response(data=serializer.data,
-                                status=status.HTTP_201_CREATED)
-        elif request.method == 'DELETE':
+                return Response(
+                    data=serializer.data,
+                    status=status.HTTP_201_CREATED
+                )
+        if request.method == 'DELETE':
             if not in_list:
                 data = {'errors': 'Этого рецепта нет в списке.'}
                 return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
@@ -172,8 +174,11 @@ class RecipesViewSet(viewsets.ModelViewSet):
             'ingredient_amount'
         )
         response = HttpResponse(content_type='text/csv')
-        response['Content-Disposition'] = ('attachment;'
-                                           'filename="shopping_list.csv"')
+        response['Content-Disposition'] = (
+            'attachment;'
+            'filename="shopping_list.csv"'
+
+        )
         writer = csv.writer(response)
         for row in list(ingredients):
             writer.writerow(row)
