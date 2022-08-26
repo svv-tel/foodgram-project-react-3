@@ -116,7 +116,7 @@ class IngredientRecipeCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Ingredient
-        fields = ('id', 'amount')
+        fields = '__all__'
 
 
 class RecipeListSerializer(serializers.ModelSerializer):
@@ -183,13 +183,16 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
             ingredients_list.append(ingredient_obj.id)
         return data
 
-    def _add_ingredients(self, recipe, ingredients):
+    def _add_ingredients(self, recipe, ingredients_data):
         IngredientRecipe.objects.bulk_create(
             [IngredientRecipe(
-                IngredientRecipe=ingredient['ingredient'],
+                ingredient=get_object_or_404(
+                    Ingredient,
+                    id=ingredient_item.get('id')
+                ),
                 recipe=recipe,
-                amount=ingredient['amount']
-            ) for ingredient in ingredients]
+                amount=ingredient_item.get('amount')
+            ) for ingredient_item in ingredients_data]
         )
 
     def get_ingredients(self, obj):
@@ -226,8 +229,8 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Recipe
-        fields = ('ingredients', 'tags', 'image', 'name',
-                  'text', 'cooking_time', 'author')
+        fields = '__all__'
+        read_only_fields = ('author',)
 
 
 class ShoppingCartSerializer(serializers.ModelSerializer):

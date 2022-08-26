@@ -11,7 +11,7 @@ SECRET_KEY = os.getenv(
     default='c73@=))1_vdyw#=s@)#(+o5+t@8ccafze-8rqvquz!7#0-d=-u'
 )
 
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*', '127.0.0.1', ]
 
@@ -70,7 +70,7 @@ DATABASES = {
         'NAME': os.getenv(key='DB_NAME', default='foodgram'),
         'USER': os.getenv(key='POSTGRES_USER', default='foodgram_user'),
         'PASSWORD': os.getenv(key='POSTGRES_PASSWORD', default='foodgram'),
-        'HOST': os.getenv(key='DB_HOST', default='127.0.0.1'),
+        'HOST': os.getenv(key='DB_HOST', default='db'),
         'PORT': os.getenv(key='DB_PORT', default='5432')
     }
 }
