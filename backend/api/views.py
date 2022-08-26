@@ -11,10 +11,8 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
-from recipes.models import (
-    Favorite, Ingredient, IngredientRecipe, Recipe,
-    ShoppingCart, Tag
-)
+from recipes.models import (Favorite, Ingredient, IngredientRecipe, Recipe,
+                            ShoppingCart, Tag)
 from users.models import Subscribe, User
 
 from .filters import IngredientFilter, RecipeFilter
