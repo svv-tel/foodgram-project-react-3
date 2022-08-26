@@ -9,7 +9,7 @@ services:
       - ./.env
 
   frontend:
-    image: tumoxa/foodgram_backend:latest
+    image: tumoxa/foodgram_frontend:latest
     volumes:
       - ../frontend/:/app/result_build/
     depends_on:
