@@ -44,7 +44,6 @@ class RecipeAdmin(admin.ModelAdmin):
         return obj.favorites.count()
 
 
-
 @admin.register(Favorite)
 class FavoriteAdmin(admin.ModelAdmin):
     """Favorite model representation in admin panel"""
