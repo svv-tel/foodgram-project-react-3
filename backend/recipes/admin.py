@@ -1,60 +1,65 @@
 from django.contrib import admin
 
-from .models import (Favorite, Ingredient, IngredientRecipe, Recipe,
-                     ShoppingCart, Tag)
-
-EMPTY_VALUE = '<-EMPTY->'
+from .models import (
+    Favorite,
+    Ingredient,
+    IngredientRecipe,
+    Recipe,
+    ShoppingCart,
+    Tag
+)
 
 
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
-    """Tag model representation in admin panel"""
     list_display = ('id', 'name', 'color', 'slug')
     search_fields = ('name',)
     list_filter = ('name',)
-    empty_value_display = EMPTY_VALUE
+    empty_value_display = '-пусто-'
 
 
 class IngredientRecipeInline(admin.TabularInline):
-    """IngredientRecipe model representation in admin panel"""
     model = IngredientRecipe
 
 
 @admin.register(Ingredient)
 class IngredientAdmin(admin.ModelAdmin):
-    """Ingredient model representation in admin panel"""
     list_display = ('id', 'name', 'measurement_unit')
     search_fields = ('name',)
     list_filter = ('name',)
     inlines = (IngredientRecipeInline,)
-    empty_value_display = EMPTY_VALUE
+    empty_value_display = '-пусто-'
+
+
+@admin.register(IngredientRecipe)
+class IngredientRecipeAdmin(admin.ModelAdmin):
+    list_display = ('ingredient', 'recipe', 'amount')
+    list_filter = ('ingredient', 'recipe', 'amount')
 
 
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
-    """Recipe model representation in admin panel"""
     list_display = ('id', 'name', 'author')
     search_fields = ('author', 'name', 'tags')
+    list_filter = ('author', 'name', 'tags')
     inlines = (IngredientRecipeInline,)
-    empty_value_display = EMPTY_VALUE
+    empty_value_display = '-пусто-'
 
-    def is_favorited(self, obj):
+    def favorites_count(self, obj):
         return obj.favorites.count()
 
 
 @admin.register(Favorite)
 class FavoriteAdmin(admin.ModelAdmin):
-    """Favorite model representation in admin panel"""
     list_display = ('id', 'user', 'recipe')
     search_fields = ('user',)
     list_filter = ('user',)
-    empty_value_display = EMPTY_VALUE
+    empty_value_display = '-пусто-'
 
 
 @admin.register(ShoppingCart)
 class ShoppingCartAdmin(admin.ModelAdmin):
-    """ShoppingCart model representation in admin panel"""
     list_display = ('id', 'user', 'recipe')
-    search_fields = ('user',)
+    search_fields = ('user', 'recipe',)
     list_filter = ('user',)
-    empty_value_display = EMPTY_VALUE
+    empty_value_display = '-пусто-'
