@@ -17,7 +17,7 @@ from users.models import Subscribe, User
 
 from .filters import IngredientFilter, RecipeFilter
 from .mixins import RetrieveListViewSet
-# from .permissions import IsAuthorOrAdminOrReadOnly
+from .permissions import IsAuthorOrAdminOrReadOnly
 from .serializers import (CustomUserSerializer, FavoriteSerializer,
                           IngredientSerializer, PasswordSerializer,
                           RecipeCreateSerializer, RecipeListSerializer,
