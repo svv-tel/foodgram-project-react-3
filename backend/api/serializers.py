@@ -49,11 +49,6 @@ class SubscriptionsRecipeSerializer(serializers.ModelSerializer):
 
 
 class SubscribeSerializer(serializers.ModelSerializer):
-    # id = serializers.ReadOnlyField(source='following.id')
-    # email = serializers.ReadOnlyField(source='following.email')
-    # username = serializers.ReadOnlyField(source='following.username')
-    # first_name = serializers.ReadOnlyField(source='following.first_name')
-    # last_name = serializers.ReadOnlyField(source='following.last_name')
     is_subscribed = serializers.SerializerMethodField()
     recipes = serializers.SerializerMethodField()
     recipes_count = serializers.SerializerMethodField()
@@ -66,11 +61,14 @@ class SubscribeSerializer(serializers.ModelSerializer):
 
     def get_recipes(self, obj):
         limit = self.context['request'].query_params.get('recipe_limit')
-        if not limit:
-            recipes = obj.recipes.all()
-        else:
+        recipes = obj.recipes.all()
+        if limit:
             recipes = obj.recipes.all()[:int(limit)]
-        return SubscriptionsRecipeSerializer(recipes, many=True).data
+        return SubscriptionsRecipeSerializer(
+            recipes,
+            many=True,
+            read_only=True,
+        ).data
 
     def get_recipes_count(self, obj):
         return obj.recipes.count()
