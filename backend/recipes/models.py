@@ -6,10 +6,9 @@ User = get_user_model()
 
 
 class Ingredient(models.Model):
-    """Model for Ingredients"""
     name = models.CharField(
         verbose_name='Название ингредиента',
-        max_length=256
+        max_length=200
     )
     measurement_unit = models.CharField(
         verbose_name='Единица измерения',
@@ -20,26 +19,19 @@ class Ingredient(models.Model):
         ordering = ('name',)
         verbose_name = 'Ингредиент'
         verbose_name_plural = 'Ингредиенты'
-        constraints = [
-            models.UniqueConstraint(
-                fields=['name', 'measurement_unit'],
-                name='unique_name_of_ingredient'
-            ),
-        ]
 
     def __str__(self):
         return self.name
 
 
 class Tag(models.Model):
-    """Model for tags"""
     name = models.CharField(
         verbose_name='Название тега',
         max_length=128,
         unique=True
     )
     color = models.CharField(
-        verbose_name='Цвет тега',
+        verbose_name='Цвет',
         max_length=7,
         unique=True
     )
@@ -50,7 +42,7 @@ class Tag(models.Model):
     )
 
     class Meta:
-        ordering = ('name',)
+        ordering = ('id',)
         verbose_name = 'Тег'
         verbose_name_plural = 'Теги'
 
@@ -59,16 +51,15 @@ class Tag(models.Model):
 
 
 class Recipe(models.Model):
-    """Model for recipes"""
     author = models.ForeignKey(
         User,
-        verbose_name='Автор',
+        verbose_name='Автор рецепта',
         on_delete=models.CASCADE,
         related_name='recipes',
     )
     name = models.CharField(
         verbose_name='Название',
-        max_length=200
+        max_length=256
     )
     image = models.ImageField(
         verbose_name='Картинка',
@@ -110,7 +101,6 @@ class Recipe(models.Model):
 
 
 class IngredientRecipe(models.Model):
-    """Model of an ingredient in recipe"""
     recipe = models.ForeignKey(
         Recipe,
         verbose_name='Рецепт',
@@ -128,27 +118,27 @@ class IngredientRecipe(models.Model):
         validators=(
             MinValueValidator(
                 1,
-                message='Количество ингредиента не может быть 0.'
+                message='Количество ингредиента не может быть меньше 1.'
             ),
         )
     )
 
     class Meta:
-        verbose_name = 'Количество ингредиента'
-        verbose_name_plural = 'Количество ингредиентов'
         constraints = [
             models.UniqueConstraint(
-                fields=['recipe', 'ingredient', 'amount'],
+                fields=('recipe', 'ingredient'),
                 name='one_ingredient_per_recipe'
             ),
         ]
+        ordering = ('id',)
+        verbose_name = 'Количество ингредиента'
+        verbose_name_plural = 'Количество ингредиентов'
 
     def __str__(self):
         return f'{self.ingredient.name} - {self.amount}'
 
 
 class Favorite(models.Model):
-    """Model for favorite user's recipes"""
     user = models.ForeignKey(
         User,
         verbose_name='Пользователь',
@@ -163,33 +153,38 @@ class Favorite(models.Model):
     )
 
     class Meta:
-        verbose_name = 'Избранное'
-        verbose_name_plural = 'Избранные'
         constraints = [
             models.UniqueConstraint(
-                fields=['recipe', 'user'],
+                fields=('user', 'recipe'),
                 name='recipe_per_user'
             ),
         ]
+        ordering = ('id',)
+        verbose_name = 'Избранное'
+        verbose_name_plural = 'Избранные'
 
 
 class ShoppingCart(models.Model):
-    user = models.OneToOneField(
+    user = models.ForeignKey(
         User,
         verbose_name='Пользователь',
         on_delete=models.CASCADE,
         related_name='shopping_cart'
     )
-    recipe = models.ManyToManyField(
+    recipe = models.ForeignKey(
         Recipe,
         verbose_name='Рецепт',
+        on_delete=models.CASCADE,
         related_name='shopping_cart'
     )
 
     class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=('user', 'recipe'),
+                name='unique_cart_user'
+            )
+        ]
         ordering = ('id',)
         verbose_name = 'Список покупок'
         verbose_name_plural = 'Списки покупок'
-
-    def __str__(self):
-        return f'{self.user}'
