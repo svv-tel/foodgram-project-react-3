@@ -106,8 +106,8 @@ class IngredientsViewSet(RetrieveListViewSet):
 class RecipesViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeListSerializer
-    # permission_classes = (IsAuthorOrAdminOrReadOnly,)
-    filter_backends = (DjangoFilterBackend,)
+    permission_classes = (IsAuthorOrAdminOrReadOnly, )
+    filter_backends = (DjangoFilterBackend, )
     filterset_class = RecipeFilter
     pagination_class = PageNumberPagination
 
@@ -119,16 +119,13 @@ class RecipesViewSet(viewsets.ModelViewSet):
             if not in_list:
                 list_objects = list_model.objects.create(user=user,
                                                          recipe=recipe)
-
-                if isinstance(list_model, Favorite):
+                if list_model == Favorite:
                     serializer = FavoriteSerializer(list_objects.recipe)
                 else:
                     serializer = ShoppingCartSerializer(list_objects.recipe)
-                return Response(
-                    data=serializer.data,
-                    status=status.HTTP_201_CREATED
-                )
-        if request.method == 'DELETE':
+                return Response(data=serializer.data,
+                                status=status.HTTP_201_CREATED)
+        elif request.method == 'DELETE':
             if not in_list:
                 data = {'errors': 'Этого рецепта нет в списке.'}
                 return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
@@ -145,19 +142,19 @@ class RecipesViewSet(viewsets.ModelViewSet):
 
     @action(methods=['DELETE', 'POST'],
             detail=True,
-            permission_classes=(IsAuthenticated,))
+            permission_classes=(IsAuthenticated, ))
     def favorite(self, request, pk=None):
         return self.get_list(request=request, list_model=Favorite, pk=pk)
 
     @action(methods=['DELETE', 'POST'],
             detail=True,
-            permission_classes=(IsAuthenticated,))
+            permission_classes=(IsAuthenticated, ))
     def shopping_cart(self, request, pk=None):
         return self.get_list(request=request, list_model=ShoppingCart, pk=pk)
 
     @action(methods=['GET'],
             detail=False,
-            permission_classes=(IsAuthenticated,))
+            permission_classes=(IsAuthenticated, ))
     def download_shopping_cart(self, request):
         ingredients = IngredientRecipe.objects.filter(
             recipe__shopping_cart__user=request.user
@@ -172,11 +169,9 @@ class RecipesViewSet(viewsets.ModelViewSet):
             'ingredient_amount'
         )
         response = HttpResponse(content_type='text/csv')
-        response['Content-Disposition'] = (
-            'attachment;'
-            'filename="shopping_list.csv"'
-
-        )
+        response['Content-Disposition'] = ('attachment;'
+                                           'filename="shoppinglist.csv"')
+        response.write(u'\ufeff'.encode('utf8'))
         writer = csv.writer(response)
         for row in list(ingredients):
             writer.writerow(row)
