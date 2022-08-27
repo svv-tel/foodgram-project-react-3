@@ -106,9 +106,10 @@ class IngredientsViewSet(RetrieveListViewSet):
 class RecipesViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeListSerializer
-    permission_classes = (IsAuthorOrAdminOrReadOnly,)
-    filter_backends = (DjangoFilterBackend,)
+    permission_classes = (IsAuthorOrAdminOrReadOnly, )
+    filter_backends = (DjangoFilterBackend, )
     filterset_class = RecipeFilter
+    pagination_class = PageNumberPagination
 
     def get_list(self, request, list_model, pk=None):
         user = self.request.user
