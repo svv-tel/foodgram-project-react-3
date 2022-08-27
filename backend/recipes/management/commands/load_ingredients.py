@@ -7,15 +7,14 @@ from recipes.models import Ingredient
 
 
 class Command(BaseCommand):
-
     help = 'Загрузка данных в базу из json-файла'
 
     def handle(self, *args, **kwargs):
         data_path = settings.BASE_DIR
         with open(
-            f'{data_path}/data/ingredients.json',
-            'r',
-            encoding='utf-8'
+                f'{data_path}/data/ingredients.json',
+                'r',
+                encoding='utf-8'
         ) as file:
             data = json.load(file)
             Ingredient.objects.bulk_create(

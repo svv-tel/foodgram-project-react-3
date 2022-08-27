@@ -4,7 +4,6 @@ from recipes.models import Tag
 
 
 class Command(BaseCommand):
-
     help = 'Создаем тегов'
 
     def handle(self, *args, **kwargs):
