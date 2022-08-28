@@ -264,7 +264,7 @@ function App() {
             />
           </Route>
           <Route path='/'>
-            <Redirect to='/recipes'>
+            <Redirect to='/recipes'/>
           </Route>
         </Switch>
         <Footer />
