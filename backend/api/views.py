@@ -172,9 +172,8 @@ class RecipesViewSet(viewsets.ModelViewSet):
         ).values_list(
             'ingredient__name',
             'ingredient__measurement_unit',
-            'ingredient__amount'
+            'ingredient_amount'
         )
-
         response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] = ('attachment;'
                                            'filename="shoppinglist.csv"')
