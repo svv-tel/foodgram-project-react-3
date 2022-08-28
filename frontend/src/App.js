@@ -253,7 +253,7 @@ function App() {
           </Route>
 
 
-          <Route exact path='/signin'>
+          <Route exact path='/recipes'>
             <SignIn
               onSignIn={authorization}
             />
@@ -263,7 +263,7 @@ function App() {
               onSignUp={registration}
             />
           </Route>
-          <Route exact path='/'>
+          <Route path='/'>
             <Redirect to='/recipes'/>
           </Route>
         </Switch>
