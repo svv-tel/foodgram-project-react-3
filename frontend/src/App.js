@@ -264,8 +264,7 @@ function App() {
             />
           </Route>
           <Route path='/'>
-            <Route exact path='/recipes'>
-            {loggedIn ? <Redirect to='/recipes' /> : <Redirect to='/recipes'/>}
+            {loggedIn ? <Redirect to='/recipes' /> : <Redirect to='/signin'/>}
           </Route>
         </Switch>
         <Footer />
