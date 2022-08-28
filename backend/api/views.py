@@ -174,6 +174,12 @@ class RecipesViewSet(viewsets.ModelViewSet):
             'ingredient__measurement_unit',
             'ingredient_amount'
         )
+        shop_list = 'Список покупок \n\n'
+        for ingredient in ingredients:
+            shop_list += (
+                f"{ingredient['ingredient_name']} "
+                f"({ingredient['ingredient_measurement_unit']}) - "
+                f"{ingredient['amount__sum']}\n")
         response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] = ('attachment;'
                                            'filename="shoppinglist.csv"')
