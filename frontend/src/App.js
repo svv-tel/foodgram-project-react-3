@@ -253,7 +253,7 @@ function App() {
           </Route>
 
 
-          <Route exact path='/signin'>
+          <Route exact path='/recipes'>
             <SignIn
               onSignIn={authorization}
             />
