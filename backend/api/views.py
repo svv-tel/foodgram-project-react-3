@@ -180,6 +180,6 @@ class RecipesViewSet(viewsets.ModelViewSet):
             'filename="shoppinglist.csv"'
         )
         writer = csv.writer(response)
-        for row in list(ingredients):
+        for row in ingredients:
             writer.writerow(row)
         return response
