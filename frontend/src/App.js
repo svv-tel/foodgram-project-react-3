@@ -253,7 +253,7 @@ function App() {
           </Route>
 
 
-          <Route exact path='/recipes'>
+          <Route exact path='/signin'>
             <SignIn
               onSignIn={authorization}
             />
@@ -264,7 +264,7 @@ function App() {
             />
           </Route>
           <Route path='/'>
-            <Redirect to='/recipes'/>
+            <Redirect to='/recipes'>
           </Route>
         </Switch>
         <Footer />
