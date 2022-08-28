@@ -263,8 +263,8 @@ function App() {
               onSignUp={registration}
             />
           </Route>
-          <Route path='/'>
-            {loggedIn ? <Redirect to='/recipes' /> : <Redirect to='/recipes'/>}
+          <Route exact path='/'>
+            <Redirect to='/recipes'/>
           </Route>
         </Switch>
         <Footer />
