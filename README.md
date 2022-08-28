@@ -10,7 +10,6 @@
 Клонировать репозиторий и перейти в него:
 ```
 git clone https://github.com/TimofeyVorobiev/foodgram-project-react.git
-cd backend
 ```
 Создайте и активируйте виртуальное окружение для этого проекта:
 ```
@@ -52,7 +51,6 @@ python manage.py runserver
 Форкнуть репозиторий:
 ```
 git clone https://github.com/TimofeyVorobiev/foodgram-project-react.git
-cd backend
 ```
 Зайти на Git-Settings-Secrets-Action и заполнить следующие параметры:
 ```

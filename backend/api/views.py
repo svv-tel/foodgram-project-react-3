@@ -174,12 +174,11 @@ class RecipesViewSet(viewsets.ModelViewSet):
             'ingredient__measurement_unit',
             'ingredient_amount'
         )
-        response = HttpResponse(content_type='text/csv', charset='utf8')
-        response['Content-Disposition'] = (
-            'attachment;'
-            'filename="shoppinglist.csv"'
-        )
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = ('attachment;'
+                                           'filename="shoppinglist.csv"')
+        response.write(u'\ufeff'.encode('utf8'))
         writer = csv.writer(response)
-        for row in ingredients:
+        for row in list(ingredients):
             writer.writerow(row)
         return response
