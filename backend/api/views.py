@@ -1,4 +1,4 @@
-# import csv
+import csv
 from django.db.models import Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
@@ -22,9 +22,6 @@ from .serializers import (CustomUserSerializer, FavoriteSerializer,
                           RecipeCreateSerializer, RecipeListSerializer,
                           ShoppingCartSerializer, SubscribeSerializer,
                           TagSerializer)
-
-FILENAME = 'shopping_cart.txt'
-HEADER_FILE_CART = 'Мой список покупок:\n\nНаименование - Кол-во/Ед.изм.\n'
 
 
 class SetPasswordAndSubscriptionUserViewSet(UserViewSet):
@@ -165,17 +162,22 @@ class RecipesViewSet(viewsets.ModelViewSet):
     )
     def download_shopping_cart(self, request):
         ingredients = IngredientRecipe.objects.filter(
-            recipe__cart__user=request.user
+            recipe__shopping_cart__user=request.user
         ).values(
             'ingredient__name',
             'ingredient__measurement_unit'
-        ).order_by('ingredient__name').annotate(total=Sum('amount'))
-        result = HEADER_FILE_CART
-        result += '\n'.join([
-            f'{ingredient["ingredient__name"]} - {ingredient["total"]}/'
-            f'{ingredient["ingredient__measurement_unit"]}'
-            for ingredient in ingredients
-        ])
-        response = HttpResponse(result, content_type='text/plain')
-        response['Content-Disposition'] = f'attachment; filename={FILENAME}'
+        ).annotate(
+            ingredient_amount=Sum(total=Sum('amount'))
+        ).values_list(
+            'ingredient__name',
+            'ingredient__measurement_unit',
+            'ingredient_amount'
+        )
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = ('attachment;'
+                                           'filename="shoppinglist.csv"')
+        response.write(u'\ufeff'.encode('utf8'))
+        writer = csv.writer(response)
+        for row in list(ingredients):
+            writer.writerow(row)
         return response
