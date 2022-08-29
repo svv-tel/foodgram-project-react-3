@@ -1,4 +1,5 @@
-# import csv
+import csv
+
 from django.db.models import Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
@@ -161,24 +162,23 @@ class RecipesViewSet(viewsets.ModelViewSet):
         permission_classes=(IsAuthenticated,)
     )
     def download_shopping_cart(self, request):
-        shopping_list = {}
         ingredients = IngredientRecipe.objects.filter(
-            recipe__carts__user=request.user
-        ).annotate(total=Sum('amount'))
-        for ingredient in ingredients:
-            amount = ingredient.total
-            name = ingredient.ingredient.name
-            measurement_unit = ingredient.ingredient.measurement_unit
-            shopping_list[name] = {
-                'measurement_unit': measurement_unit,
-                'amount': amount
-            }
-        shop_list = 'Список покупок \n\n'
-        for ingredient in ingredients:
-            shop_list += (
-                f"{ingredient['ingredient_name']} "
-                f"({ingredient['ingredient_measurement_unit']}) - "
-                f"{ingredient['amount__sum']}\n")
-        response = HttpResponse(shop_list, 'Content-Type: text/plain')
-        response['Content-Disposition'] = 'attachment; filename="Cart.txt"'
+            recipe__shopping_cart__user=request.user
+        ).values(
+            'ingredient__name',
+            'ingredient__measurement_unit'
+        ).annotate(
+            ingredient_amount=Sum('amount')
+        ).values_list(
+            'ingredient__name',
+            'ingredient__measurement_unit',
+            'ingredient_amount'
+        )
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = ('attachment;'
+                                           'filename="shoppinglist.csv"')
+        response.write(u'\ufeff'.encode('utf8'))
+        writer = csv.writer(response)
+        for row in list(ingredients):
+            writer.writerow(row)
         return response
