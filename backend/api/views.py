@@ -1,5 +1,4 @@
-import csv
-
+# import csv
 from django.db.models import Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
@@ -180,6 +179,6 @@ class RecipesViewSet(viewsets.ModelViewSet):
                 f"{ingredient['ingredient_name']} "
                 f"({ingredient['ingredient_measurement_unit']}) - "
                 f"{ingredient['amount__sum']}\n")
-        return HttpResponse(shop_list, content_type='text/plain')
+        response = HttpResponse(shop_list, 'Content-Type: text/plain')
         response['Content-Disposition'] = 'attachment; filename="Cart.txt"'
         return response
