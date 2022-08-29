@@ -1,6 +1,4 @@
-# import csv
-from datetime import datetime
-
+import csv
 from django.db.models import Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
@@ -24,6 +22,9 @@ from .serializers import (CustomUserSerializer, FavoriteSerializer,
                           RecipeCreateSerializer, RecipeListSerializer,
                           ShoppingCartSerializer, SubscribeSerializer,
                           TagSerializer)
+
+FILENAME = 'shopping_cart.txt'
+HEADER_FILE_CART = 'Мой список покупок:\n\nНаименование - Кол-во/Ед.изм.\n'
 
 
 class SetPasswordAndSubscriptionUserViewSet(UserViewSet):
@@ -163,61 +164,18 @@ class RecipesViewSet(viewsets.ModelViewSet):
         permission_classes=(IsAuthenticated,)
     )
     def download_shopping_cart(self, request):
-        user = request.user
-        shopping_cart = {}
-
         ingredients = IngredientRecipe.objects.filter(
-            recipe__shopping_carts__user=user
+            recipe__cart__user=request.user
         ).values(
             'ingredient__name',
-            'ingredient__measurement_unit_id__name'
-        ).order_by(
-            'ingredient__name',
-            'ingredient__measurement_unit_id__name'
-        ).annotate(
-            Sum('amount')
-        )
-
-        for ingredient in ingredients:
-            shopping_cart[ingredient['ingredient__name']] = {
-                'amount': ingredient['amount__sum'],
-                'measurement_unit': ingredient[
-                    'ingredient__measurement_unit_id__name'
-                ]
-            }
-        current_date = datetime.datetime.now().strftime("%d-%m-%Y %H:%M")
-        shopping_list = (
-            'Список покупок сформирован с помощью проекта Foodgram\n'
-            f'Дата формирования списка: {current_date}\n\n'
-        )
-        for ingredient, value in shopping_cart.items():
-            shopping_list = shopping_list + (
-                f' {ingredient} - {value["amount"]} '
-                f'{value["measurement_unit"]}\n'
-            )
-
-        return HttpResponse(shopping_list, {
-            'Content-Type': 'text/plain',
-            'Content-Disposition': 'attachment; filename="shopping_list.txt"',
-        })
-        # _____
-        # ingredients = IngredientRecipe.objects.filter(
-        #     recipe__shopping_cart__user=request.user
-        # ).values(
-        #     'ingredient__name',
-        #     'ingredient__measurement_unit'
-        # ).annotate(
-        #     ingredient_amount=Sum('amount')
-        # ).values_list(
-        #     'ingredient__name',
-        #     'ingredient__measurement_unit',
-        #     'ingredient_amount'
-        # )
-        # response = HttpResponse(content_type='text/csv')
-        # response['Content-Disposition'] = ('attachment;'
-        #                                    'filename="shoppinglist.csv"')
-        # response.write(u'\ufeff'.encode('utf8'))
-        # writer = csv.writer(response)
-        # for row in list(ingredients):
-        #     writer.writerow(row)
-        # return response
+            'ingredient__measurement_unit'
+        ).order_by('ingredient__name').annotate(total=Sum('amount'))
+        result = HEADER_FILE_CART
+        result += '\n'.join([
+            f'{ingredient["ingredient__name"]} - {ingredient["total"]}/'
+            f'{ingredient["ingredient__measurement_unit"]}'
+            for ingredient in ingredients
+        ])
+        response = HttpResponse(result, content_type='text/plain')
+        response['Content-Disposition'] = f'attachment; filename={FILENAME}'
+        return response
